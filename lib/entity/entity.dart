@@ -1,3 +1,4 @@
 library entity;
 
-export 'game_settings.dart';
+export 'models/game_settings.dart';
+export 'models/tile/tile.dart';
