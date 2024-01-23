@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:game_2048/domain/domain.dart';
 import 'package:game_2048/entity/entity.dart';
 import 'package:game_2048/presentation/presentation.dart';
 import 'package:game_2048/resources/resources.dart';
+
+class GameBlocProvider extends StatelessWidget {
+  const GameBlocProvider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<GameBloc>(
+      create: (_) => GameBloc()
+        ..add(
+          GameEvent.startNewGame(
+            GameSettings(fieldSize: 4),
+          ),
+        ),
+      child: const GameScreen(),
+    );
+  }
+}
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -17,15 +36,21 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      body: Column(
-        children: [
-          const GameBar(),
-          GameBoard(
-            gameSettings: GameSettings(
-              fieldSize: 4,
-            ),
-          ),
-        ],
+      body: BlocBuilder<GameBloc, GameState>(
+        builder: (_, state) {
+          if (state is GameInitializedState) {
+            return const Column(
+              children: [
+                GameBar(),
+                GameBoard(),
+              ],
+            );
+          }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }

@@ -1,4 +1,5 @@
-part of 'game.dart';
+import 'package:flutter/material.dart';
+import 'package:game_2048/resources/resources.dart';
 
 class InformationTile extends StatelessWidget {
   const InformationTile({

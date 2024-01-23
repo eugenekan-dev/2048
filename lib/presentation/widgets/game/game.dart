@@ -1,11 +1,6 @@
-import 'dart:math';
+export 'game_bar.dart';
+export 'game_bar_button.dart';
+export 'information_tile.dart';
 
-import 'package:flutter/material.dart';
-import 'package:game_2048/entity/entity.dart';
-import 'package:game_2048/resources/colors.dart';
-
-part 'game_bar.dart';
-part 'game_bar_button.dart';
-part 'information_tile.dart';
-
-part 'game_board.dart';
+export 'game_board.dart';
+export 'game_board_background.dart';

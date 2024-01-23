@@ -13,7 +13,7 @@ class Application extends StatelessWidget {
         useMaterial3: true,
       ),
       //TODO: Add routing and main menu
-      home: const GameScreen(),
+      home: const GameBlocProvider(),
     );
   }
 }

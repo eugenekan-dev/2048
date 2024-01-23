@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'tile.freezed.dart';
@@ -13,30 +14,51 @@ abstract class Tile with _$Tile {
     int? nextIndex,
   }) = _Tile;
 
-  //TODO: udpate function, remove duplicated calculations;
-  double getTop({
+  //TODO: update function with deiscriptive information
+  Offset getPositon({
     required double size,
     required int quantity,
     required double padding,
   }) {
-    /// Get vertical index of tile on the board;
-    final x = ((index + 1) / size).ceil();
-    final y = x - 1;
+    final i = ((index + 1) / quantity).ceil();
 
-    return y * (size) + x * padding;
+    final x = ((i - 1) * size) + (padding * i);
+
+    final z = index - (((index + 1) / quantity).ceil() * quantity - quantity);
+
+    final y = (z * size) + (padding * (z + 1));
+
+    return Offset(x, y);
   }
 
   //TODO: udpate function, remove duplicated calculations;
-  double getLeft({
-    required double size,
-    required int quantity,
-    required double padding,
-  }) {
-    final x = ((index + 1) / size).ceil();
-    final y = x - 1;
+  // double getTop({
+  //   required double size,
+  //   required int quantity,
+  //   required double padding,
+  // }) {
+  //   /// Get vertical index of tile on the board;
+  //   // final x = ((index + 1) / quantity).ceil();
+  //   // final y = x - 1;
 
-    final z = index - (y * size);
+  //   // return y * (size) + (x * padding);
+  // }
 
-    return z * size + ((z + 1) * padding);
-  }
+  //TODO: udpate function, remove duplicated calculations;
+  // double getLeft({
+  //   required double size,
+  //   required int quantity,
+  //   required double padding,
+  // }) {
+  //   // final x = ((index + 1) / quantity).ceil();
+  //   // final y = x * quantity - quantity;
+
+  //   // final z = index - (y * size);
+
+  //   // return z * size + ((z + 1) * padding);
+
+  //   final i = index - (((index + 1) / quantity).ceil() * quantity - quantity);
+
+  //   return (i * size) + (padding * (i + 1));
+  // }
 }

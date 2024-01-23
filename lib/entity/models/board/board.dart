@@ -11,15 +11,18 @@ class Board with _$Board {
     @Default(0) int score,
     @Default(0) int best,
     required List<Tile> tiles,
+    required GameSettings gameSettings,
     Board? previousBoard,
   }) = _Board;
 
   factory Board.newGame({
     required int best,
     required List<Tile> tiles,
+    required GameSettings gameSettings,
   }) =>
       _Board(
         tiles: tiles,
         best: best,
+        gameSettings: gameSettings,
       );
 }

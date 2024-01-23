@@ -1,4 +1,9 @@
-part of 'game.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:game_2048/domain/game/game_bloc.dart';
+import 'package:game_2048/entity/entity.dart';
+import 'package:game_2048/presentation/presentation.dart';
+import 'package:game_2048/resources/resources.dart';
 
 class GameBar extends StatelessWidget {
   const GameBar({super.key});
@@ -32,7 +37,11 @@ class GameBar extends StatelessWidget {
                   ),
                   GameBarButton(
                     width: 84,
-                    onPressed: () {},
+                    onPressed: () => context
+                        .read<GameBloc>()
+                        .add(GameEvent.startNewGame(GameSettings(
+                          fieldSize: 4,
+                        ))),
                     text: 'Menu',
                   ),
                 ],

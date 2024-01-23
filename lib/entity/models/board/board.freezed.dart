@@ -21,6 +21,7 @@ mixin _$Board {
   int get score => throw _privateConstructorUsedError;
   int get best => throw _privateConstructorUsedError;
   List<Tile> get tiles => throw _privateConstructorUsedError;
+  GameSettings get gameSettings => throw _privateConstructorUsedError;
   Board? get previousBoard => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -38,6 +39,7 @@ abstract class $BoardCopyWith<$Res> {
       int score,
       int best,
       List<Tile> tiles,
+      GameSettings gameSettings,
       Board? previousBoard});
 
   $BoardCopyWith<$Res>? get previousBoard;
@@ -61,6 +63,7 @@ class _$BoardCopyWithImpl<$Res, $Val extends Board>
     Object? score = null,
     Object? best = null,
     Object? tiles = null,
+    Object? gameSettings = null,
     Object? previousBoard = freezed,
   }) {
     return _then(_value.copyWith(
@@ -84,6 +87,10 @@ class _$BoardCopyWithImpl<$Res, $Val extends Board>
           ? _value.tiles
           : tiles // ignore: cast_nullable_to_non_nullable
               as List<Tile>,
+      gameSettings: null == gameSettings
+          ? _value.gameSettings
+          : gameSettings // ignore: cast_nullable_to_non_nullable
+              as GameSettings,
       previousBoard: freezed == previousBoard
           ? _value.previousBoard
           : previousBoard // ignore: cast_nullable_to_non_nullable
@@ -117,6 +124,7 @@ abstract class _$$BoardImplCopyWith<$Res> implements $BoardCopyWith<$Res> {
       int score,
       int best,
       List<Tile> tiles,
+      GameSettings gameSettings,
       Board? previousBoard});
 
   @override
@@ -139,6 +147,7 @@ class __$$BoardImplCopyWithImpl<$Res>
     Object? score = null,
     Object? best = null,
     Object? tiles = null,
+    Object? gameSettings = null,
     Object? previousBoard = freezed,
   }) {
     return _then(_$BoardImpl(
@@ -162,6 +171,10 @@ class __$$BoardImplCopyWithImpl<$Res>
           ? _value._tiles
           : tiles // ignore: cast_nullable_to_non_nullable
               as List<Tile>,
+      gameSettings: null == gameSettings
+          ? _value.gameSettings
+          : gameSettings // ignore: cast_nullable_to_non_nullable
+              as GameSettings,
       previousBoard: freezed == previousBoard
           ? _value.previousBoard
           : previousBoard // ignore: cast_nullable_to_non_nullable
@@ -179,6 +192,7 @@ class _$BoardImpl implements _Board {
       this.score = 0,
       this.best = 0,
       required final List<Tile> tiles,
+      required this.gameSettings,
       this.previousBoard})
       : _tiles = tiles;
 
@@ -203,11 +217,13 @@ class _$BoardImpl implements _Board {
   }
 
   @override
+  final GameSettings gameSettings;
+  @override
   final Board? previousBoard;
 
   @override
   String toString() {
-    return 'Board(won: $won, over: $over, score: $score, best: $best, tiles: $tiles, previousBoard: $previousBoard)';
+    return 'Board(won: $won, over: $over, score: $score, best: $best, tiles: $tiles, gameSettings: $gameSettings, previousBoard: $previousBoard)';
   }
 
   @override
@@ -220,13 +236,15 @@ class _$BoardImpl implements _Board {
             (identical(other.score, score) || other.score == score) &&
             (identical(other.best, best) || other.best == best) &&
             const DeepCollectionEquality().equals(other._tiles, _tiles) &&
+            (identical(other.gameSettings, gameSettings) ||
+                other.gameSettings == gameSettings) &&
             (identical(other.previousBoard, previousBoard) ||
                 other.previousBoard == previousBoard));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, won, over, score, best,
-      const DeepCollectionEquality().hash(_tiles), previousBoard);
+      const DeepCollectionEquality().hash(_tiles), gameSettings, previousBoard);
 
   @JsonKey(ignore: true)
   @override
@@ -242,6 +260,7 @@ abstract class _Board implements Board {
       final int score,
       final int best,
       required final List<Tile> tiles,
+      required final GameSettings gameSettings,
       final Board? previousBoard}) = _$BoardImpl;
 
   @override
@@ -254,6 +273,8 @@ abstract class _Board implements Board {
   int get best;
   @override
   List<Tile> get tiles;
+  @override
+  GameSettings get gameSettings;
   @override
   Board? get previousBoard;
   @override
