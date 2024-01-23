@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:game_2048/entity/entity.dart';
 import 'package:game_2048/presentation/presentation.dart';
-import 'package:game_2048/resources/colors.dart';
+import 'package:game_2048/resources/resources.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({
@@ -14,11 +15,16 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: Column(
         children: [
-          GameBar(),
+          const GameBar(),
+          GameBoard(
+            gameSettings: GameSettings(
+              fieldSize: 4,
+            ),
+          ),
         ],
       ),
     );
