@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'tile.freezed.dart';
 
@@ -32,6 +34,14 @@ abstract class Tile with _$Tile {
     final y = (z * size) + (padding * (z + 1));
 
     return Offset(x, y);
+  }
+
+  factory Tile.empty(int index) {
+    return Tile(
+      id: const Uuid().v4(),
+      value: 0,
+      index: index,
+    );
   }
 
   //TODO: udpate function, remove duplicated calculations;

@@ -51,54 +51,83 @@ class GameBloc extends IBloc<GameEvent, GameState> {
         );
       },
       move: (event) async {
-        print('${event.runtimeType} ${event.direction}');
-        final tileList = List.from(state.board.tiles);
+        final newList = _move(state.board.tiles, event.direction);
 
-        tileList.sort((a, b) => a.index.compareTo(b.index));
+        final mergeList = _merge(newList);
 
-        final newTiles = List<Tile>.empty(growable: true);
+        print('newList ${mergeList.last}');
 
-        for (int i = 0; i < tileList.length; i++) {
-          final tile = _calculate(
-            tile: tileList[i],
-            list: newTiles,
-            rowSize: state.board.gameSettings.fieldSize,
-            direction: event.direction,
-          );
-
-          newTiles.add(tile);
-
-          if (i + 1 < 1) {
-            Tile next = tileList[i + 1];
-
-            if (tile.value == next.value) {
-              final index = tile.index, nextIndex = next.index;
-
-              if (_inRange(
-                  rowSize: state.board.gameSettings.fieldSize,
-                  index: index,
-                  nextIndex: nextIndex)) {
-                newTiles.add(next.copyWith(nextIndex: tile.nextIndex));
-
-                i += 1;
-                continue;
-              }
-            }
-          }
-        }
-
-        _printList(newTiles, 4);
-
+        GameBoardUtil.printList(newList, 4);
         emit(
           state.copyWith(
             board: state.board.copyWith(
-              tiles: List.from(newTiles),
+              tiles: List.from(mergeList),
               previousBoard: state.board,
             ),
           ),
         );
       },
     );
+  }
+
+  List<Tile> _move(List<Tile> list, SwipeDirection direction) {
+    print('DIRECTION $direction');
+    final tileList = List<Tile>.from(list);
+    final verticalOrder =
+        GameBoardUtil.verticalOrder(state.board.gameSettings.fieldSize);
+
+    final asc = direction.isLeft || direction.isUp;
+
+    final isVertical = direction.isUp || direction.isDown;
+
+    tileList.sort(
+      (a, b) =>
+          (asc ? 1 : -1) *
+          (isVertical
+              ? verticalOrder[a.index].compareTo(verticalOrder[b.index])
+              : a.index.compareTo(b.index)),
+    );
+
+    final newTiles = List<Tile>.empty(growable: true);
+
+    for (int i = 0; i < tileList.length; i++) {
+      final tile = _calculate(
+        tile: tileList[i],
+        list: newTiles,
+        rowSize: state.board.gameSettings.fieldSize,
+        direction: direction,
+      );
+
+      newTiles.add(tile);
+
+      if (i + 1 < 1) {
+        Tile next = tileList[i + 1];
+
+        if (tile.value == next.value) {
+          final index = isVertical ? verticalOrder[tile.index] : tile.index;
+          final nextIndex = isVertical ? verticalOrder[next.index] : next.index;
+
+          final inRange = _inRange(
+              rowSize: state.board.gameSettings.fieldSize,
+              index: index,
+              nextIndex: nextIndex);
+
+          if (_inRange(
+              rowSize: state.board.gameSettings.fieldSize,
+              index: index,
+              nextIndex: nextIndex)) {
+            newTiles.add(next.copyWith(nextIndex: tile.nextIndex));
+
+            i += 1;
+            continue;
+          }
+        }
+      }
+    }
+
+    GameBoardUtil.printList(newTiles, 4);
+
+    return newTiles;
   }
 
   Tile addNewTile(List<int> indexList, int maxSize) {
@@ -121,45 +150,77 @@ class GameBloc extends IBloc<GameEvent, GameState> {
     required int rowSize,
     required SwipeDirection direction,
   }) {
-    int nextIndex = ((tile.index + 1) / rowSize).ceil() * rowSize - rowSize;
+    final asc = direction.isLeft || direction.isUp;
+    final isVertical = direction.isDown || direction.isUp;
+
+    final verticalOrder =
+        GameBoardUtil.verticalOrder(state.board.gameSettings.fieldSize);
+
+    int index = isVertical ? verticalOrder[tile.index] : tile.index;
+
+    int nextIndex =
+        ((index + 1) / rowSize).ceil() * rowSize - (asc ? rowSize : 1);
 
     if (list.isNotEmpty) {
-      final lastIndex = list.last.nextIndex ?? list.last.index;
+      var last = list.last;
+      var lastIndex = last.nextIndex ?? last.index;
+      lastIndex = isVertical ? verticalOrder[lastIndex] : lastIndex;
 
       if (_inRange(rowSize: rowSize, index: tile.index, nextIndex: lastIndex)) {
-        nextIndex = lastIndex + 1;
+        nextIndex = lastIndex + (asc ? 1 : -1);
       }
     }
-    return tile.copyWith(nextIndex: nextIndex);
+    return tile.copyWith(
+        nextIndex: isVertical ? verticalOrder.indexOf(nextIndex) : nextIndex);
   }
 
-  void _printList(List<Tile> list, int rowSize) {
-    final board = List<int>.empty(growable: true);
+  List<Tile> _merge(
+    List<Tile> list,
+  ) {
+    final tiles = List<Tile>.empty(growable: true);
 
-    for (int i = 0; i < pow(rowSize, 2); i++) {
-      board.add(0);
-    }
+    bool tilesMoved = false;
+    final indexes = List<int>.empty(growable: true);
 
-    for (final tile in list) {
-      board[tile.index] = tile.value;
-    }
+    int score = state.board.score;
 
-    String str = '';
+    for (int i = 0; i < list.length; i++) {
+      Tile tile = list[i];
+      bool merged = false;
+      int value = tile.value;
 
-    int newLine = 0;
+      if (i + 1 < 1) {
+        Tile next = list[i + 1];
+        if (tile.nextIndex == next.nextIndex ||
+            tile.index == next.nextIndex && tile.nextIndex == null) {
+          value = tile.value + next.value;
 
-    board.forEach((value) {
-      if (newLine == rowSize) {
-        newLine = 0;
-
-        str += '\n';
+          // print('')
+          merged = true;
+          score += value;
+          i += 1;
+        }
       }
 
-      str += '[${value}]';
-      newLine++;
-    });
+      if (merged || tile.nextIndex != null && tile.index != tile.nextIndex) {
+        tilesMoved = true;
+      }
 
-    print(str);
+      tiles.add(tile.copyWith(
+        index: tile.nextIndex ?? tile.index,
+        nextIndex: null,
+        value: value,
+        merged: merged,
+      ));
+
+      indexes.add(tiles.last.index);
+    }
+
+    // if (tilesMoved) {
+    //   tiles.add(addNewTile(indexes, state.board.gameSettings.fieldSize));
+    // }
+
+    return tiles;
   }
 
   /// Checks in index and next index in range of single row, divides [index] and
@@ -170,4 +231,91 @@ class GameBloc extends IBloc<GameEvent, GameState> {
     required int nextIndex,
   }) =>
       (index / rowSize).ceil() == (nextIndex / rowSize).ceil();
+}
+
+extension SwipeDirectionExtension on SwipeDirection {
+  bool get isLeft => this == SwipeDirection.left;
+
+  bool get isRight => this == SwipeDirection.right;
+  bool get isUp => this == SwipeDirection.up;
+  bool get isDown => this == SwipeDirection.down;
+}
+
+class GameBoardUtil {
+  const GameBoardUtil._();
+
+  static List<int> verticalOrder(int size) {
+    final list = List.generate(pow(size, 2).toInt(), (index) => index);
+    printListInt(list);
+
+    final newList = List<int>.empty(growable: true);
+
+    for (int i = 0; i < size; i++) {
+      final num = size * size - (size - i);
+      for (int j = 0; j < size; j++) {
+        newList.add(num - size * j);
+      }
+    }
+
+    return newList;
+  }
+
+  static void printListInt(List<int> list) {
+    final size = sqrt(list.length);
+
+    String str = '';
+
+    for (int i = 0; i < list.length; i++) {
+      final v = (i / size).toString();
+
+      if (v.contains('.0')) {
+        str += '\n${(i / size).ceil() + 1}: ';
+      }
+
+      str += '[${list[i]}]';
+    }
+
+    print(str);
+  }
+
+  static void printList(List<Tile> list, int rowSize) {
+    final board = List<int>.empty(growable: true);
+    final maxSize = pow(rowSize, 2);
+
+    for (int i = 0; i < maxSize; i++) {
+      board.add(0);
+    }
+
+    for (final tile in list) {
+      board[tile.index] = tile.value;
+    }
+
+    String str = '';
+
+    for (int i = 0; i < maxSize; i++) {
+      final v = (i / 4).toString();
+
+      if (v.contains('.0')) {
+        str += '\n${(i / 4).ceil() + 1}: ';
+      }
+
+      str += '[${board[i]}]';
+    }
+
+    print(str);
+  }
+
+  static void printArray(List<List<Tile>> array) {
+    String str = '';
+
+    for (int i = 0; i < array.length; i++) {
+      str += '\n${i + 1}: ';
+
+      for (final tile in array[i]) {
+        str += '[${tile.value}]';
+      }
+    }
+
+    print('PRINT array $str');
+  }
 }
