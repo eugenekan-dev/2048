@@ -15,105 +15,116 @@ class GameBoard extends StatelessWidget {
   final double innerPadding = 8.0;
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameBloc, GameState>(builder: (_, state) {
-      if (state.gameStatus.isInitial) {
-        return const SizedBox();
-      }
+    return BlocBuilder<GameBloc, GameState>(
+      builder: (_, state) {
+        if (state.gameStatus.isInitial) {
+          return const SizedBox();
+        }
 
-      final size = max(
-        300.0,
-        min(
-          (MediaQuery.of(context).size.shortestSide * 0.9).floorToDouble(),
-          500.0,
-        ),
-      );
-
-      final gameSettings = state.board.gameSettings;
-
-      final tileNumber = gameSettings.fieldSize;
-
-      /// Calculate cell sizes, that containt tile and inner padding;
-      final cellSize = size / tileNumber;
-
-      /// Calculate single tile size based on padding;
-      final tileSize = cellSize - innerPadding - (innerPadding / tileNumber);
-
-      /// Calculate board size based on cell sizes;
-      final boardWidth = cellSize * tileNumber;
-
-      return SwipeDetector(
-        onSwipe: (direction, offset) =>
-            context.read<GameBloc>().add(GameEvent.move(direction)),
-        child: Container(
-          margin: const EdgeInsets.only(
-            top: 24,
+        final size = max(
+          300.0,
+          min(
+            (MediaQuery.of(context).size.shortestSide * 0.9).floorToDouble(),
+            500.0,
           ),
-          width: boardWidth,
-          height: boardWidth,
-          child: Stack(
-            children: [
-              BoardBackground(
-                boardSize: boardWidth,
-              ),
-              TileLayer(
-                gameRowSize: tileNumber,
-                gameSize: gameSettings.tileQuantity,
-                boardWidth: boardWidth,
-                tileSize: tileSize,
-                innerPadding: innerPadding,
-                builder: (index, size, top, left) {
-                  return Positioned(
-                    top: top,
-                    left: left,
-                    child: Container(
-                      width: tileSize,
-                      height: tileSize,
-                      decoration: const BoxDecoration(
-                        color: AppColors.emptyTileColor,
-                        borderRadius: AppColors.borderRadius,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              TileLayer(
-                gameSize: state.board.tiles.length,
-                boardWidth: boardWidth,
-                tileSize: tileSize,
-                gameRowSize: tileNumber,
-                innerPadding: innerPadding,
-                builder: (index, size, top, left) {
-                  print('rebuild');
-                  final tile = state.board.tiles[index];
+        );
 
-                  final position = tile.getPositon(
-                    size: size,
-                    quantity: tileNumber,
-                    padding: innerPadding,
-                  );
-                  return Positioned(
-                    key: ValueKey(tile.id),
-                    top: position.dx,
-                    left: position.dy,
-                    child: Container(
-                      width: tileSize,
-                      height: tileSize,
-                      decoration: BoxDecoration(
-                        color: AppColors.tileColors[tile.value],
-                        borderRadius: AppColors.borderRadius,
+        final gameSettings = state.board.gameSettings;
+
+        final tileNumber = gameSettings.fieldSize;
+
+        /// Calculate cell sizes, that containt tile and inner padding;
+        final cellSize = size / tileNumber;
+
+        /// Calculate single tile size based on padding;
+        final tileSize = cellSize - innerPadding - (innerPadding / tileNumber);
+
+        /// Calculate board size based on cell sizes;
+        final boardWidth = cellSize * tileNumber;
+
+        final tileListFromArray =
+            GameBoardUtil.converteArrayToList(state.board.tileArray);
+
+        return SwipeDetector(
+          onSwipe: (direction, offset) =>
+              context.read<GameBloc>().add(GameEvent.move(direction)),
+          child: Container(
+            margin: const EdgeInsets.only(
+              top: 24,
+            ),
+            width: boardWidth,
+            height: boardWidth,
+            child: Stack(
+              children: [
+                BoardBackground(
+                  boardSize: boardWidth,
+                ),
+                TileLayer(
+                  gameRowSize: tileNumber,
+                  gameSize: gameSettings.tileQuantity,
+                  boardWidth: boardWidth,
+                  tileSize: tileSize,
+                  innerPadding: innerPadding,
+                  builder: (index, size, top, left) {
+                    return Positioned(
+                      top: top,
+                      left: left,
+                      child: Container(
+                        width: tileSize,
+                        height: tileSize,
+                        decoration: const BoxDecoration(
+                          color: AppColors.emptyTileColor,
+                          borderRadius: AppColors.borderRadius,
+                        ),
                       ),
-                      child: Center(
-                        child: Text('${tile.value}'),
+                    );
+                  },
+                ),
+                TileLayer(
+                  gameSize: state.board.gameSettings.tileQuantity,
+                  boardWidth: boardWidth,
+                  tileSize: tileSize,
+                  gameRowSize: tileNumber,
+                  innerPadding: innerPadding,
+                  builder: (index, size, top, left) {
+                    print('rebuild $index');
+                    final tile = tileListFromArray[index];
+
+                    if (tile.isEmpty) {
+                      return const SizedBox();
+                    }
+
+                    final position = tile.getPositon(
+                      size: size,
+                      quantity: tileNumber,
+                      padding: innerPadding,
+                      index: index + 1,
+                    );
+
+                    return Positioned(
+                      key: ValueKey(tile.id),
+                      top: position.dx,
+                      left: position.dy,
+                      child: Container(
+                        width: tileSize,
+                        height: tileSize,
+                        decoration: BoxDecoration(
+                          color: AppColors.tileColors[tile.value],
+                          borderRadius: AppColors.borderRadius,
+                        ),
+                        child: Center(
+                          child: Text('${tile.value}'),
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
@@ -162,6 +173,9 @@ class TileLayer extends StatelessWidget {
               /// Get location based on horizontal and vertical index`s;
               final left = z * tileSize + ((z + 1) * innerPadding);
               final top = y * (tileSize) + x * innerPadding;
+
+              print('[GEN] $index x:$x y:$y z:$z left:$left top:top');
+
               return builder(index, tileSize, top, left);
             },
           ),

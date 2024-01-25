@@ -10,24 +10,24 @@ class Board with _$Board {
     @Default(false) bool over,
     @Default(0) int score,
     @Default(0) int best,
-    required List<Tile> tiles,
+    required List<List<Tile>> tileArray,
     required GameSettings gameSettings,
     Board? previousBoard,
   }) = _Board;
 
   factory Board.newGame({
     required int best,
-    required List<Tile> tiles,
+    required List<List<Tile>> tileArray,
     required GameSettings gameSettings,
   }) =>
       _Board(
-        tiles: tiles,
+        tileArray: tileArray,
         best: best,
         gameSettings: gameSettings,
       );
 
   factory Board.empty() => _Board(
-        tiles: [],
+        tileArray: [],
         gameSettings: GameSettings.defaultSizeGame(),
       );
 }

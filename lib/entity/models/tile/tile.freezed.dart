@@ -17,9 +17,11 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$Tile {
   bool get merged => throw _privateConstructorUsedError;
+  ArrayPosition get position => throw _privateConstructorUsedError;
   String get id => throw _privateConstructorUsedError;
   int get value => throw _privateConstructorUsedError;
-  int get index => throw _privateConstructorUsedError;
+  ArrayPosition? get nextPosition =>
+      throw _privateConstructorUsedError; // required int index,
   int? get nextIndex => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -31,7 +33,13 @@ abstract class $TileCopyWith<$Res> {
   factory $TileCopyWith(Tile value, $Res Function(Tile) then) =
       _$TileCopyWithImpl<$Res, Tile>;
   @useResult
-  $Res call({bool merged, String id, int value, int index, int? nextIndex});
+  $Res call(
+      {bool merged,
+      ArrayPosition position,
+      String id,
+      int value,
+      ArrayPosition? nextPosition,
+      int? nextIndex});
 }
 
 /// @nodoc
@@ -48,9 +56,10 @@ class _$TileCopyWithImpl<$Res, $Val extends Tile>
   @override
   $Res call({
     Object? merged = null,
+    Object? position = null,
     Object? id = null,
     Object? value = null,
-    Object? index = null,
+    Object? nextPosition = freezed,
     Object? nextIndex = freezed,
   }) {
     return _then(_value.copyWith(
@@ -58,6 +67,10 @@ class _$TileCopyWithImpl<$Res, $Val extends Tile>
           ? _value.merged
           : merged // ignore: cast_nullable_to_non_nullable
               as bool,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as ArrayPosition,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -66,10 +79,10 @@ class _$TileCopyWithImpl<$Res, $Val extends Tile>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as int,
-      index: null == index
-          ? _value.index
-          : index // ignore: cast_nullable_to_non_nullable
-              as int,
+      nextPosition: freezed == nextPosition
+          ? _value.nextPosition
+          : nextPosition // ignore: cast_nullable_to_non_nullable
+              as ArrayPosition?,
       nextIndex: freezed == nextIndex
           ? _value.nextIndex
           : nextIndex // ignore: cast_nullable_to_non_nullable
@@ -85,7 +98,13 @@ abstract class _$$TileImplCopyWith<$Res> implements $TileCopyWith<$Res> {
       __$$TileImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool merged, String id, int value, int index, int? nextIndex});
+  $Res call(
+      {bool merged,
+      ArrayPosition position,
+      String id,
+      int value,
+      ArrayPosition? nextPosition,
+      int? nextIndex});
 }
 
 /// @nodoc
@@ -99,9 +118,10 @@ class __$$TileImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? merged = null,
+    Object? position = null,
     Object? id = null,
     Object? value = null,
-    Object? index = null,
+    Object? nextPosition = freezed,
     Object? nextIndex = freezed,
   }) {
     return _then(_$TileImpl(
@@ -109,6 +129,10 @@ class __$$TileImplCopyWithImpl<$Res>
           ? _value.merged
           : merged // ignore: cast_nullable_to_non_nullable
               as bool,
+      position: null == position
+          ? _value.position
+          : position // ignore: cast_nullable_to_non_nullable
+              as ArrayPosition,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -117,10 +141,10 @@ class __$$TileImplCopyWithImpl<$Res>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as int,
-      index: null == index
-          ? _value.index
-          : index // ignore: cast_nullable_to_non_nullable
-              as int,
+      nextPosition: freezed == nextPosition
+          ? _value.nextPosition
+          : nextPosition // ignore: cast_nullable_to_non_nullable
+              as ArrayPosition?,
       nextIndex: freezed == nextIndex
           ? _value.nextIndex
           : nextIndex // ignore: cast_nullable_to_non_nullable
@@ -131,12 +155,13 @@ class __$$TileImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$TileImpl extends _Tile {
+class _$TileImpl extends _Tile with DiagnosticableTreeMixin {
   const _$TileImpl(
       {this.merged = false,
+      required this.position,
       required this.id,
       required this.value,
-      required this.index,
+      this.nextPosition,
       this.nextIndex})
       : super._();
 
@@ -144,17 +169,33 @@ class _$TileImpl extends _Tile {
   @JsonKey()
   final bool merged;
   @override
+  final ArrayPosition position;
+  @override
   final String id;
   @override
   final int value;
   @override
-  final int index;
+  final ArrayPosition? nextPosition;
+// required int index,
   @override
   final int? nextIndex;
 
   @override
-  String toString() {
-    return 'Tile(merged: $merged, id: $id, value: $value, index: $index, nextIndex: $nextIndex)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'Tile(merged: $merged, position: $position, id: $id, value: $value, nextPosition: $nextPosition, nextIndex: $nextIndex)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'Tile'))
+      ..add(DiagnosticsProperty('merged', merged))
+      ..add(DiagnosticsProperty('position', position))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('value', value))
+      ..add(DiagnosticsProperty('nextPosition', nextPosition))
+      ..add(DiagnosticsProperty('nextIndex', nextIndex));
   }
 
   @override
@@ -163,16 +204,19 @@ class _$TileImpl extends _Tile {
         (other.runtimeType == runtimeType &&
             other is _$TileImpl &&
             (identical(other.merged, merged) || other.merged == merged) &&
+            (identical(other.position, position) ||
+                other.position == position) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.value, value) || other.value == value) &&
-            (identical(other.index, index) || other.index == index) &&
+            (identical(other.nextPosition, nextPosition) ||
+                other.nextPosition == nextPosition) &&
             (identical(other.nextIndex, nextIndex) ||
                 other.nextIndex == nextIndex));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, merged, id, value, index, nextIndex);
+  int get hashCode => Object.hash(
+      runtimeType, merged, position, id, value, nextPosition, nextIndex);
 
   @JsonKey(ignore: true)
   @override
@@ -184,21 +228,24 @@ class _$TileImpl extends _Tile {
 abstract class _Tile extends Tile {
   const factory _Tile(
       {final bool merged,
+      required final ArrayPosition position,
       required final String id,
       required final int value,
-      required final int index,
+      final ArrayPosition? nextPosition,
       final int? nextIndex}) = _$TileImpl;
   const _Tile._() : super._();
 
   @override
   bool get merged;
   @override
+  ArrayPosition get position;
+  @override
   String get id;
   @override
   int get value;
   @override
-  int get index;
-  @override
+  ArrayPosition? get nextPosition;
+  @override // required int index,
   int? get nextIndex;
   @override
   @JsonKey(ignore: true)

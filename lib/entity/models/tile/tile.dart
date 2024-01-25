@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:game_2048/entity/entity.dart';
 import 'package:uuid/uuid.dart';
 
 part 'tile.freezed.dart';
@@ -13,9 +14,11 @@ abstract class Tile with _$Tile {
   const Tile._();
   const factory Tile({
     @Default(false) bool merged,
+    required ArrayPosition position,
     required String id,
     required int value,
-    required int index,
+    ArrayPosition? nextPosition,
+    // required int index,
     int? nextIndex,
   }) = _Tile;
 
@@ -24,23 +27,44 @@ abstract class Tile with _$Tile {
     required double size,
     required int quantity,
     required double padding,
+    required int index,
   }) {
-    final i = ((index + 1) / quantity).ceil();
+    /// Get vertical index of tile on the board;
+    // final x = ((index + 1) / gameRowSize).ceil();
+    // final y = x - 1;
 
-    final x = ((i - 1) * size) + (padding * i);
+    // /// Get horizontal index of tile on the board;
+    // final z = index - (y * gameRowSize);
+    final y = position.x + 1;
+    final x = position.y;
+    // print('[index] vertical $y');
 
-    final z = index - (((index + 1) / quantity).ceil() * quantity - quantity);
+    // print('[index] horizontal $z');
 
-    final y = (z * size) + (padding * (z + 1));
+    // final left = z * size + ((z + 1) * padding);
 
-    return Offset(x, y);
+    // final top = y * (size) + x * padding;
+
+    // final y = ((index) / quantity).ceil();
+
+    // final x = index - (((index + 1) / quantity).ceil() * quantity - quantity);
+    print('[POS]  x:$x y:$y  x:${position.y} y:${position.x + 1} ');
+
+    final left = ((y - 1) * size) + (padding * y);
+
+    final top = (x * size) + (padding * (x + 1));
+
+    // print('[POS]  x:$x y:$y  y:$top x:$left');
+
+    return Offset(top, left);
   }
 
-  factory Tile.empty(int index) {
+  factory Tile.empty(ArrayPosition position) {
     return Tile(
+      position: position,
       id: const Uuid().v4(),
       value: 0,
-      index: index,
+      // index: offset,
     );
   }
 
@@ -75,5 +99,7 @@ abstract class Tile with _$Tile {
   //   return (i * size) + (padding * (i + 1));
   // }
 
+  int get x => position.x;
+  int get y => position.y;
   bool get isEmpty => value == 0;
 }
