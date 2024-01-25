@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
 import 'package:game_2048/domain/game/game_bloc.dart';
 import 'package:game_2048/presentation/presentation.dart';
 import 'package:game_2048/resources/resources.dart';
@@ -15,29 +16,35 @@ class GameBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GameBloc, GameState>(builder: (_, state) {
-      if (state is GameInitializedState) {
-        final size = max(
-          300.0,
-          min(
-            (MediaQuery.of(context).size.shortestSide * 0.9).floorToDouble(),
-            500.0,
-          ),
-        );
+      if (state.gameStatus.isInitial) {
+        return const SizedBox();
+      }
 
-        final gameSettings = state.board.gameSettings;
+      final size = max(
+        300.0,
+        min(
+          (MediaQuery.of(context).size.shortestSide * 0.9).floorToDouble(),
+          500.0,
+        ),
+      );
 
-        final tileNumber = gameSettings.fieldSize;
+      final gameSettings = state.board.gameSettings;
 
-        /// Calculate cell sizes, that containt tile and inner padding;
-        final cellSize = size / tileNumber;
+      final tileNumber = gameSettings.fieldSize;
 
-        /// Calculate single tile size based on padding;
-        final tileSize = cellSize - innerPadding - (innerPadding / tileNumber);
+      /// Calculate cell sizes, that containt tile and inner padding;
+      final cellSize = size / tileNumber;
 
-        /// Calculate board size based on cell sizes;
-        final boardWidth = cellSize * tileNumber;
+      /// Calculate single tile size based on padding;
+      final tileSize = cellSize - innerPadding - (innerPadding / tileNumber);
 
-        return Container(
+      /// Calculate board size based on cell sizes;
+      final boardWidth = cellSize * tileNumber;
+
+      return SwipeDetector(
+        onSwipe: (direction, offset) =>
+            context.read<GameBloc>().add(GameEvent.move(direction)),
+        child: Container(
           margin: const EdgeInsets.only(
             top: 24,
           ),
@@ -76,6 +83,7 @@ class GameBoard extends StatelessWidget {
                 gameRowSize: tileNumber,
                 innerPadding: innerPadding,
                 builder: (index, size, top, left) {
+                  print('rebuild');
                   final tile = state.board.tiles[index];
 
                   final position = tile.getPositon(
@@ -103,9 +111,8 @@ class GameBoard extends StatelessWidget {
               ),
             ],
           ),
-        );
-      }
-      return const SizedBox();
+        ),
+      );
     });
   }
 }

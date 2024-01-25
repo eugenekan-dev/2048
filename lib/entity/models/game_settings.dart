@@ -1,7 +1,7 @@
 import 'dart:math';
 
 class GameSettings {
-  GameSettings({
+  const GameSettings({
     required this.fieldSize,
     this.startingNumbersQuantity = 2,
   });
@@ -10,4 +10,8 @@ class GameSettings {
   final int startingNumbersQuantity;
 
   int get tileQuantity => pow(fieldSize, 2).toInt();
+
+  factory GameSettings.defaultSizeGame() {
+    return const GameSettings(fieldSize: 4);
+  }
 }

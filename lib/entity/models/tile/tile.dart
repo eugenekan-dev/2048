@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'tile.freezed.dart';
@@ -61,4 +64,6 @@ abstract class Tile with _$Tile {
 
   //   return (i * size) + (padding * (i + 1));
   // }
+
+  bool get isEmpty => value == 0;
 }

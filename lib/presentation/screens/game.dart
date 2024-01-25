@@ -38,17 +38,17 @@ class _GameScreenState extends State<GameScreen> {
       backgroundColor: AppColors.backgroundColor,
       body: BlocBuilder<GameBloc, GameState>(
         builder: (_, state) {
-          if (state is GameInitializedState) {
-            return const Column(
-              children: [
-                GameBar(),
-                GameBoard(),
-              ],
+          if (state.gameStatus.isInitial) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           }
 
-          return const Center(
-            child: CircularProgressIndicator(),
+          return const Column(
+            children: [
+              GameBar(),
+              GameBoard(),
+            ],
           );
         },
       ),

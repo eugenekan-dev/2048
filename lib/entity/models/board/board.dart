@@ -25,4 +25,9 @@ class Board with _$Board {
         best: best,
         gameSettings: gameSettings,
       );
+
+  factory Board.empty() => _Board(
+        tiles: [],
+        gameSettings: GameSettings.defaultSizeGame(),
+      );
 }

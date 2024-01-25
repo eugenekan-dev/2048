@@ -5,4 +5,5 @@ class GameEvent with _$GameEvent {
   const GameEvent._();
 
   const factory GameEvent.startNewGame(GameSettings settings) = _StartNewGame;
+  const factory GameEvent.move(SwipeDirection direction) = _Move;
 }
