@@ -76,11 +76,11 @@ class GameBoard extends StatelessWidget {
                 gameRowSize: tileNumber,
                 innerPadding: innerPadding,
                 builder: (index, size, top, left) {
-                  final tile = state.board.tiles[index];
+                  final tile = state.board.getBoardTilesAsList[index];
 
                   final position = tile.getPositon(
                     size: size,
-                    quantity: tileNumber,
+                    rowLenght: tileNumber,
                     padding: innerPadding,
                   );
                   return Positioned(

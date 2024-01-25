@@ -10,14 +10,14 @@ class Board with _$Board {
     @Default(false) bool over,
     @Default(0) int score,
     @Default(0) int best,
-    required List<Tile> tiles,
+    required List<List<Tile>> tiles,
     required GameSettings gameSettings,
     Board? previousBoard,
   }) = _Board;
 
   factory Board.newGame({
     required int best,
-    required List<Tile> tiles,
+    required List<List<Tile>> tiles,
     required GameSettings gameSettings,
   }) =>
       _Board(
@@ -25,4 +25,20 @@ class Board with _$Board {
         best: best,
         gameSettings: gameSettings,
       );
+
+  List<Tile> get getBoardTilesAsList {
+    final newList = List<Tile>.empty(growable: true);
+
+    for (List<Tile> list in tiles) {
+      newList.addAll(list);
+    }
+    return newList;
+  }
+
+  List<List<Tile?>> getEmptyBoard(int rowSize) {
+    final board =
+        List<List<Tile?>>.filled(rowSize, List<Tile?>.filled(rowSize, null));
+
+    return board;
+  }
 }

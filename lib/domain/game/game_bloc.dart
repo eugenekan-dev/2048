@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart' as bloc_concurrency;
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -30,7 +31,7 @@ class GameBloc extends IBloc<GameEvent, GameState> {
           list.add(
             addNewTile(
               list.map((e) => e.index).toList(),
-              event.settings.tileQuantity,
+              event.settings.fieldSize,
             ),
           );
         } while (list.length < event.settings.startingNumbersQuantity);
@@ -50,12 +51,14 @@ class GameBloc extends IBloc<GameEvent, GameState> {
     );
   }
 
-  Tile addNewTile(List<int> indexList, int maxSize) {
+  Tile addNewTile(List<Offset> indexList, int rowSize) {
     //TODO: update function
     var i = 0;
 
     do {
-      i = Random().nextInt(maxSize);
+      final random = Random();
+      final x = random.nextInt(rowSize);
+      final y = random.nextInt(rowSize);
     } while (indexList.contains(i));
     return Tile(
       id: const Uuid().v4(),

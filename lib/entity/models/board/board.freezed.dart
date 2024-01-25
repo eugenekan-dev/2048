@@ -20,7 +20,7 @@ mixin _$Board {
   bool get over => throw _privateConstructorUsedError;
   int get score => throw _privateConstructorUsedError;
   int get best => throw _privateConstructorUsedError;
-  List<Tile> get tiles => throw _privateConstructorUsedError;
+  List<List<Tile>> get tiles => throw _privateConstructorUsedError;
   GameSettings get gameSettings => throw _privateConstructorUsedError;
   Board? get previousBoard => throw _privateConstructorUsedError;
 
@@ -38,7 +38,7 @@ abstract class $BoardCopyWith<$Res> {
       bool over,
       int score,
       int best,
-      List<Tile> tiles,
+      List<List<Tile>> tiles,
       GameSettings gameSettings,
       Board? previousBoard});
 
@@ -86,7 +86,7 @@ class _$BoardCopyWithImpl<$Res, $Val extends Board>
       tiles: null == tiles
           ? _value.tiles
           : tiles // ignore: cast_nullable_to_non_nullable
-              as List<Tile>,
+              as List<List<Tile>>,
       gameSettings: null == gameSettings
           ? _value.gameSettings
           : gameSettings // ignore: cast_nullable_to_non_nullable
@@ -123,7 +123,7 @@ abstract class _$$BoardImplCopyWith<$Res> implements $BoardCopyWith<$Res> {
       bool over,
       int score,
       int best,
-      List<Tile> tiles,
+      List<List<Tile>> tiles,
       GameSettings gameSettings,
       Board? previousBoard});
 
@@ -170,7 +170,7 @@ class __$$BoardImplCopyWithImpl<$Res>
       tiles: null == tiles
           ? _value._tiles
           : tiles // ignore: cast_nullable_to_non_nullable
-              as List<Tile>,
+              as List<List<Tile>>,
       gameSettings: null == gameSettings
           ? _value.gameSettings
           : gameSettings // ignore: cast_nullable_to_non_nullable
@@ -191,7 +191,7 @@ class _$BoardImpl implements _Board {
       this.over = false,
       this.score = 0,
       this.best = 0,
-      required final List<Tile> tiles,
+      required final List<List<Tile>> tiles,
       required this.gameSettings,
       this.previousBoard})
       : _tiles = tiles;
@@ -208,9 +208,9 @@ class _$BoardImpl implements _Board {
   @override
   @JsonKey()
   final int best;
-  final List<Tile> _tiles;
+  final List<List<Tile>> _tiles;
   @override
-  List<Tile> get tiles {
+  List<List<Tile>> get tiles {
     if (_tiles is EqualUnmodifiableListView) return _tiles;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_tiles);
@@ -259,7 +259,7 @@ abstract class _Board implements Board {
       final bool over,
       final int score,
       final int best,
-      required final List<Tile> tiles,
+      required final List<List<Tile>> tiles,
       required final GameSettings gameSettings,
       final Board? previousBoard}) = _$BoardImpl;
 
@@ -272,7 +272,7 @@ abstract class _Board implements Board {
   @override
   int get best;
   @override
-  List<Tile> get tiles;
+  List<List<Tile>> get tiles;
   @override
   GameSettings get gameSettings;
   @override

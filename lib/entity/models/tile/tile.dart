@@ -17,19 +17,56 @@ abstract class Tile with _$Tile {
   //TODO: update function with deiscriptive information
   Offset getPositon({
     required double size,
-    required int quantity,
+    required int rowLenght,
     required double padding,
   }) {
-    final i = ((index + 1) / quantity).ceil();
+    final i = ((index + 1) / rowLenght).ceil();
 
     final x = ((i - 1) * size) + (padding * i);
 
-    final z = index - (((index + 1) / quantity).ceil() * quantity - quantity);
+    final z =
+        index - (((index + 1) / rowLenght).ceil() * rowLenght - rowLenght);
 
     final y = (z * size) + (padding * (z + 1));
 
     return Offset(x, y);
   }
+
+  // Tile _calcualate({
+  //   required int rowLenght,
+  //   required Tile tile,
+  //   required List<Tile> tiles,
+  // }) {
+  //   final tileIndex = tile.index;
+
+  //   int nextIndex =
+  //       ((tileIndex + 1) / rowLenght).ceil() * tileIndex - tileIndex;
+
+  //   if (tiles.isNotEmpty) {
+  //     final last = tiles.last;
+
+  //     final lastIndex = last.nextIndex ?? last.index;
+
+  //     // if (_inRange(
+  //     //   index: tileIndex,
+  //     //   nextIndex: lastIndex,
+  //     //   rowLenght: rowLenght,
+  //     // )) {
+  //     //   nextIndex = lastIndex + 1;
+  //     // }
+  //   }
+  // }
+
+  // bool _inRange({
+  //   required int index,
+  //   required int nextIndex,
+  //   required int rowLenght,
+  // }) {
+
+  //   for (int i = 0; i < rowLenght; i++) {
+  //     return index >= 0 && index < rowLenght * i+1;
+  //   }
+  // }
 
   //TODO: udpate function, remove duplicated calculations;
   // double getTop({
